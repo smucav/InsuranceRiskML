@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.venv/
+*.egg-info/
+
+# Data
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Jupyter Notebooks
+notebooks/.ipynb_checkpoints/
+
+# DVC
+*.dvc
+.dvc/
+.dvcignore
+
+# IDEs
+.vscode/
+.idea/
