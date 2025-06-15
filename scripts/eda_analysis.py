@@ -12,16 +12,20 @@ class EDAAnalysis:
 
     def summarize_data(self):
         """Compute descriptive statistics for numerical columns."""
-        numerical_cols = ['totalpremium', 'totalclaims', 'cylinders', 'cubiccapacity', 'kilowatts',
-                         'numberofdoors', 'customvalueestimate', 'capitaloutstanding', 'suminsured',
-                         'calculatedpremiumperterm', 'numberofvehiclesinfleet']
+        numerical_cols = [
+            'totalpremium', 'totalclaims', 'cylinders', 'cubiccapacity',
+            'kilowatts', 'numberofdoors', 'customvalueestimate',
+            'capitaloutstanding', 'suminsured', 'calculatedpremiumperterm',
+            'numberofvehiclesinfleet'
+        ]
         available_cols = [col for col in numerical_cols if col in self.data.columns]
         return self.data[available_cols].describe()
 
     def calculate_loss_ratio(self, group_by=None):
         """Calculate Loss Ratio (totalclaims / totalpremium)."""
         if 'totalpremium' in self.data.columns and 'totalclaims' in self.data.columns:
-            self.data['lossratio'] = self.data['totalclaims'] / self.data['totalpremium'].replace(0, np.nan)
+            self.data['lossratio'] = self.data['totalclaims'] / \
+                self.data['totalpremium'].replace(0, np.nan)
             if group_by and group_by in self.data.columns:
                 return self.data.groupby(group_by)['lossratio'].mean()
             return self.data['lossratio'].mean()
@@ -35,7 +39,8 @@ class EDAAnalysis:
             print(f"Error: Column {column} not found")
             return
         plt.figure(figsize=(10, 6))
-        if plot_type == 'histogram' and self.data[column].dtype in ['float64', 'int64']:
+        if plot_type == 'histogram' and \
+                self.data[column].dtype in ['float64', 'int64']:
             sns.histplot(self.data[column], kde=True)
             plt.title(f'Distribution of {column}')
         elif plot_type == 'bar':
@@ -77,7 +82,10 @@ class EDAAnalysis:
     def correlation_matrix(self, columns=None):
         """Compute and plot correlation matrix for specified or numerical columns."""
         if columns is None:
-            columns = [col for col in self.data.columns if self.data[col].dtype in ['float64', 'int64']]
+            columns = [
+                col for col in self.data.columns
+                if self.data[col].dtype in ['float64', 'int64']
+            ]
         if not all(col in self.data.columns for col in columns):
             print("Error: Some specified columns not found")
             return None
@@ -115,11 +123,17 @@ class EDAAnalysis:
 
     def plot_temporal_trends(self):
         """Plot temporal trends in claims and premiums."""
-        if 'transactionmonth' not in self.data.columns or 'totalclaims' not in self.data.columns or 'totalpremium' not in self.data.columns:
+        if 'transactionmonth' not in self.data.columns or \
+                'totalclaims' not in self.data.columns or \
+                'totalpremium' not in self.data.columns:
             print("Error: Required columns for temporal trends not found")
             return
-        self.data['transactionmonth'] = pd.to_datetime(self.data['transactionmonth'], errors='coerce')
-        monthly_data = self.data.groupby(self.data['transactionmonth'].dt.to_period('M')).agg({
+        self.data['transactionmonth'] = pd.to_datetime(
+            self.data['transactionmonth'], errors='coerce'
+        )
+        monthly_data = self.data.groupby(
+            self.data['transactionmonth'].dt.to_period('M')
+        ).agg({
             'policyid': 'count',
             'totalclaims': 'mean',
             'totalpremium': 'mean'
@@ -127,8 +141,16 @@ class EDAAnalysis:
         monthly_data['transactionmonth'] = monthly_data['transactionmonth'].dt.to_timestamp()
 
         plt.figure(figsize=(12, 6))
-        plt.plot(monthly_data['transactionmonth'], monthly_data['totalclaims'], label='Average Claims')
-        plt.plot(monthly_data['transactionmonth'], monthly_data['totalpremium'], label='Average Premium')
+        plt.plot(
+            monthly_data['transactionmonth'],
+            monthly_data['totalclaims'],
+            label='Average Claims'
+        )
+        plt.plot(
+            monthly_data['transactionmonth'],
+            monthly_data['totalpremium'],
+            label='Average Premium'
+        )
         plt.title('Temporal Trends in Claims and Premiums')
         plt.xlabel('Transaction Month')
         plt.ylabel('Amount')
