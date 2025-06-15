@@ -112,8 +112,8 @@ class DataLoader:
         self.impute_totalpremium()
 
         # Save cleaned data
-        save_path = "../data/processed/clean_data.csv"
-        self.save_cleaned_data(filename="clean_data.csv", directory="../data/processed")
+        save_path = "data/processed/clean_data.csv"
+        self.save_cleaned_data(filename="clean_data.csv", directory="data/processed")
 
         # Reload and return data from saved file
         print(f"Reloading cleaned data from {save_path}")
@@ -185,7 +185,7 @@ class DataLoader:
         # Drop temporary column
         self.data.drop(columns=['adjusted_premium_per_term'], inplace=True)
 
-    def save_cleaned_data(self, filename="clean_data.csv", directory="../data/processed"):
+    def save_cleaned_data(self, filename="clean_data.csv", directory="data/processed"):
         """Save the cleaned data to a CSV file in the specified directory."""
         if self.data is None:
             raise ValueError("No cleaned data to save. Run clean_data() first.")
