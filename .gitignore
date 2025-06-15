@@ -19,8 +19,8 @@ notebooks/.ipynb_checkpoints/
 
 # DVC
 *.dvc
-.dvc/
 .dvcignore
+!.dvc/   # Allow DVC metadata directory
 
 # IDEs
 .vscode/
