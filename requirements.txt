@@ -8,3 +8,4 @@ xgboost==2.1.1
 shap==0.46.0
 dvc==3.55.2
 jupyter==1.1.1
+dvc>=3.0.0
