@@ -17,9 +17,6 @@ data/processed/*
 # Jupyter Notebooks
 notebooks/.ipynb_checkpoints/
 
-# DVC
-*.dvc
-.dvcignore
 !.dvc/   # Allow DVC metadata directory
 
 # IDEs
