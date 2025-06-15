@@ -11,7 +11,12 @@ env/
 # Jupyter Notebooks
 notebooks/.ipynb_checkpoints/
 
+# data
+data/raw/MachineLearningRating_v3.txt
+data/processed/clean_data.csv
+
 !.dvc/   # Allow DVC metadata directory
+.dvc/cache/
 
 # IDEs
 .vscode/
