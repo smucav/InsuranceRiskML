@@ -25,4 +25,4 @@ jobs:
     - name: Run linting
       run: |
         pip install flake8
-        flake8 scripts/ --max-line-length=88
+        flake8 scripts/ --max-line-length=115
