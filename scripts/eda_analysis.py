@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+
 class EDAAnalysis:
     """Class to perform EDA and visualization on insurance dataset."""
     def __init__(self, data):

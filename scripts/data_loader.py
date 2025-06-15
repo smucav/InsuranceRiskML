@@ -185,7 +185,6 @@ class DataLoader:
         # Drop temporary column
         self.data.drop(columns=['adjusted_premium_per_term'], inplace=True)
 
-
     def save_cleaned_data(self, filename="clean_data.csv", directory="../data/processed"):
         """Save the cleaned data to a CSV file in the specified directory."""
         if self.data is None:
@@ -224,7 +223,6 @@ class DataLoader:
 #            self.data['capitaloutstanding'].fillna(0, inplace=True)
             print("Filled missing 'capitaloutstanding' with 0.")
 
-
     def drop_sparse_columns(self):
         """
         Drops columns that are too sparse (i.e., with excessive missing values)
@@ -243,7 +241,6 @@ class DataLoader:
         self.data.drop(columns=existing_sparse, inplace=True)
 
         print(f"Dropped {len(existing_sparse)} sparse columns: {existing_sparse}")
-
 
     def drop_rows_with_missing_vehicle_info(self):
         """
