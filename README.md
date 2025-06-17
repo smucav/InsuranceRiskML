@@ -230,9 +230,3 @@ Targeted pricing in Gauteng and high-risk postcodes, and marketing to low-risk p
 - `plots/claim_frequency_province.png`, `claim_severity_postcode.png`, `margin_gender.png`
 - `task-3` branch
 
-
-## 🚀 Future Work
-
-- **3:** Hypothesis testing and predictive modeling
-  - Example: chi-square test (claim frequency), t-test (severity), regression
----
