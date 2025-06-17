@@ -290,7 +290,7 @@ class DataLoader:
         # Fill missing gender based on title
         missing_before = self.data['gender'].isna().sum()
         for title, gender in title_gender_map.items():
-            mask = (self.data['gender'].isna()) & (self.data['title'].str.lower() == title)
+            mask = (self.data['gender'].isna()) & (self.data['title'] == title)
             self.data.loc[mask, 'gender'] = gender
         missing_after = self.data['gender'].isna().sum()
 
