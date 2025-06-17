@@ -72,24 +72,26 @@ class HypothesisTesting:
         # H₀: No risk differences across provinces (Gauteng vs. KwaZulu-Natal)
         results.append(self.chi_squared_test('province', 'Gauteng', 'KwaZulu-Natal'))
         results.append(self.t_test('province', 'Gauteng', 'KwaZulu-Natal', 'claim_severity'))
-        # H₀: No risk/margin differences between zip codes
-        if 'postalcode' in self.data.columns:
-            postcode_metrics = self.calculate_metrics('postalcode')
-            claim_counts = self.data[self.data['has_claim'] == 1]['postalcode'].value_counts()
-            valid_postcodes = claim_counts[claim_counts > 10].index
-            postcode_metrics = postcode_metrics.loc[postcode_metrics.index.isin(valid_postcodes)]
-            if len(postcode_metrics) < 2:
-                print("Error: Insufficient valid postcodes with >10 claims")
+        # H₀: No risk/margin differences between zip codes (by MainCrestaZone)
+        if 'maincrestazone' in self.data.columns:
+            zone_metrics = self.calculate_metrics('maincrestazone')
+            claim_counts = self.data[self.data['has_claim'] == 1]['maincrestazone'].value_counts()
+            valid_zones = claim_counts[claim_counts > 10].index
+            zone_metrics = zone_metrics.loc[zone_metrics.index.isin(valid_zones)]
+            if len(zone_metrics) < 2:
+                print("Error: Insufficient valid MainCrestaZones with >10 claims")
                 return pd.DataFrame(results)
-            high_risk = postcode_metrics['claim_frequency'].nlargest(170).index  # Top 20%
-            low_risk = postcode_metrics['claim_frequency'].nsmallest(170).index  # Bottom 20%
-            self.data['postcode_group'] = self.data['postalcode'].apply(
+            n_zones = len(zone_metrics)
+            n_select = max(2, int(0.2 * n_zones))  # Top/bottom 20% or at least 2 zones
+            high_risk = zone_metrics['claim_frequency'].nlargest(n_select).index
+            low_risk = zone_metrics['claim_frequency'].nsmallest(n_select).index
+            self.data['zone_group'] = self.data['maincrestazone'].apply(
                 lambda x: 'High Risk' if x in high_risk else 'Low Risk' if x in low_risk else np.nan
             )
-            df_postcode = self.data[self.data['postcode_group'].notna()]
-            chi_result = self.chi_squared_test('postcode_group', 'High Risk', 'Low Risk')
+            df_zone = self.data[self.data['zone_group'].notna()]
+            chi_result = self.chi_squared_test('zone_group', 'High Risk', 'Low Risk')
             if chi_result is None:
-                contingency_table = pd.crosstab(df_postcode['postcode_group'], df_postcode['has_claim'])
+                contingency_table = pd.crosstab(df_zone['zone_group'], df_zone['has_claim'])
                 if contingency_table.shape[1] == 2:
                     _, p = fisher_exact(contingency_table)
                     results.append({
@@ -98,8 +100,8 @@ class HypothesisTesting:
                     })
             else:
                 results.append(chi_result)
-            results.append(self.t_test('postcode_group', 'High Risk', 'Low Risk', 'claim_severity'))
-            results.append(self.t_test('postcode_group', 'High Risk', 'Low Risk', 'margin'))
+            results.append(self.t_test('zone_group', 'High Risk', 'Low Risk', 'claim_severity'))
+            results.append(self.t_test('zone_group', 'High Risk', 'Low Risk', 'margin'))
         # H₀: No risk differences between Women and Men
         gender_counts = self.data['gender'].value_counts()
         print(f"Gender distribution: {gender_counts.to_dict()}")
@@ -119,5 +121,5 @@ class HypothesisTesting:
     def save_results(self, filename='hypothesis_test_results.csv'):
         results = self.run_hypothesis_tests()
         os.makedirs('reports', exist_ok=True)
-        results.to_csv(f'reports/{filename}', index=False)
+        results.to_csv(f'../reports/{filename}', index=False)
         print(f"Results saved to reports/{filename}")
