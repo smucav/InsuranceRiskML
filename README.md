@@ -230,3 +230,89 @@ Targeted pricing in Gauteng and high-risk postcodes, and marketing to low-risk p
 - `plots/claim_frequency_province.png`, `claim_severity_postcode.png`, `margin_gender.png`
 - `task-3` branch
 
+## 📈 Task 4: Claim Severity Prediction for Risk-Based Pricing
+
+### 🎯 Objective
+Build predictive models to estimate `totalclaims` for policies with claims > 0, supporting ACIS’s dynamic, risk-based pricing system.
+
+---
+
+### 🧪 Methodology
+
+- **Target:** `totalclaims` (log-transformed; continuous; only for policies with claims)
+- **Metrics:** RMSE, R-squared
+- **Features:**  
+  `province`, `postalcode`, `gender`, `vehicletype`, `cubiccapacity`, `registrationyear`,  
+  `covertype`, `maritalstatus`, `suminsured`, `vehicle_age`, `postcode_claim_freq`
+
+#### 🔧 Data Preparation
+
+- Filtered `totalclaims > 0`: 2,422 rows (~0.29% of 837,833)
+- Dropped high-cardinality/date columns (e.g., `transactionmonth`, `vehicleintrodate`, `make`, `model`)
+- Cleaned string categoricals (e.g., stripped whitespace)
+- Imputed missing values:
+  - Categorical: Mode
+  - Numerical: Median
+- Engineered:
+  - `vehicle_age = 2015 - registrationyear`
+  - `postcode_claim_freq`: mean claim frequency by postal code
+- Encoding:
+  - `postalcode`: Target Encoding
+  - Others: One-Hot Encoding
+- Train-Test Split: 80:20  
+  - Train: 1,937 rows  
+  - Test: 485 rows
+
+---
+
+### 🤖 Models & Results
+
+| Model            | RMSE       | R² Score |
+|------------------|------------|----------|
+| Linear Regression| 29,140.46  | 0.3201   |
+| Random Forest    | 30,900.56  | 0.2355   |
+| **XGBoost**      | **28,619.74** | **0.3442** |
+
+✅ **Best Model:** XGBoost — lowest RMSE, highest R²
+
+---
+
+### 📊 SHAP Interpretability
+
+- **Top Influential Features:**
+  - `suminsured`
+  - `covertype_Windscreen`
+  - `postalcode_encoded`
+  - `postalcode`
+  - `cubiccapacity`
+
+- **Insight:**
+  Higher `suminsured` leads to higher predicted claim severity — indicating greater risk and supporting premium adjustments.
+
+---
+
+### ⚠️ Limitations
+
+- Small dataset (2,422 rows) increases risk of overfitting.
+- Gender heavily imbalanced (~93.5% Male after imputation).
+- Geographic/vehicle differences may introduce regional bias.
+
+---
+
+### 💼 Business Impact
+
+- Enables **risk-based pricing** strategies.
+- Feature-based premium adjustments:
+  - Higher premiums for high `suminsured` or `Windscreen` cover
+- Guides **targeted marketing** for low-risk segments.
+- Encourages better **claims data collection** for model improvement.
+
+---
+
+### 📦 Deliverables
+
+- `scripts/modeling.py`
+- `notebooks/task_4_modeling.ipynb`
+- `reports/model_results.csv`, `shap_importance.csv`
+- `plots/model_rmse_comparison.png`, `shap_summary.png`
+- Branch: `task-4`
